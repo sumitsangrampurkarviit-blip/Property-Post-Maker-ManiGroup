@@ -214,8 +214,8 @@ function AssetUpload({
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[11px] font-bold text-[#4a3935]">{name || `${isLogo ? 'Logo mark' : 'Hero banner'}`}</p>
-        <p className="mt-0.5 text-[10px] text-[#9b877c]">{name ? 'Saved in this browser' : isLogo ? 'PNG, JPG or WebP' : 'Optional listing image'}</p>
+        <p className="truncate text-[11px] font-bold text-[#4a3935]">{name || `${isLogo ? 'Logo mark' : 'Banner strip'}`}</p>
+        <p className="mt-0.5 text-[10px] text-[#9b877c]">{name ? (isLogo ? 'Saved in this browser' : 'Saved · 1080 × 180 px recommended') : isLogo ? 'PNG, JPG or WebP' : 'Recommended 1080 × 180 px'}</p>
       </div>
       {name ? (
         <button type="button" onClick={onClear} className="pressable rounded-md p-2 text-[#806d64] hover:bg-[#eadfd2] hover:text-[#571c2b]" aria-label={`Remove ${kind}`} data-testid={`button-remove-${kind}`}>
@@ -251,6 +251,7 @@ function Home() {
 
   const title = useMemo(() => splitTitle(details.property), [details.property]);
   const theme = variations[variation];
+  const logoPresent = Boolean(brandAssets.logo);
   const locationWords = useMemo(() => {
     const parts = details.location.split(',').map((part) => part.trim()).filter(Boolean);
     return {
@@ -335,7 +336,6 @@ function Home() {
          <linearGradient id="bannerShade" x1="0" y1="0" x2="0" y2="1"><stop stop-color="${theme.start}" stop-opacity=".12"/><stop offset="1" stop-color="${theme.end}" stop-opacity=".95"/></linearGradient>
       </defs>
       <rect width="1080" height="1350" fill="url(#bg)"/>
-       ${safeBanner ? `<image href="${safeBanner}" x="0" y="0" width="1080" height="760" preserveAspectRatio="xMidYMid slice" opacity=".3"/><rect width="1080" height="760" fill="url(#bannerShade)"/>` : ''}
       <circle cx="845" cy="230" r="340" fill="url(#sun)"/>
       <circle cx="860" cy="190" r="74" fill="#dfbd76" opacity=".83"/>
       <path d="M0 965 L310 590 L480 765 L670 445 L1080 920 V1350 H0Z" fill="#241520" opacity=".65"/>
@@ -346,12 +346,17 @@ function Home() {
        <text x="72" y="46" fill="${theme.accent}" font-family="Arial, sans-serif" font-size="18" letter-spacing="5">THE PROPERTY EDIT</text>
       <text x="1008" y="46" text-anchor="end" fill="#f4e6c9" font-family="Arial, sans-serif" font-size="17" letter-spacing="3">POST 01</text>
        ${safeLogo ? `<image href="${safeLogo}" x="72" y="82" width="210" height="52" preserveAspectRatio="xMinYMid meet"/>` : ''}
-      <text x="72" y="158" fill="#eedcb8" font-family="Arial, sans-serif" font-size="18" letter-spacing="5">FOR THE LIFE YOU IMAGINE</text>
-      <text x="72" y="250" fill="#fbf4e6" font-family="Georgia, serif" font-size="88" font-weight="bold">${lineOne}</text>
-      <text x="72" y="345" fill="#fbf4e6" font-family="Georgia, serif" font-size="88" font-weight="bold">${lineTwo}</text>
-      <rect x="72" y="408" width="56" height="4" fill="#d8b16a"/>
-       <text x="72" y="462" fill="${theme.accent}" font-family="Arial, sans-serif" font-size="23" letter-spacing="2">${safeArea.toUpperCase()}</text>
-      <text x="72" y="498" fill="#f7e8cb" font-family="Arial, sans-serif" font-size="23">${safeCity}</text>
+       ${safeLogo ? `<image href="${safeLogo}" x="72" y="82" width="210" height="52" preserveAspectRatio="xMinYMid meet"/>` : ''}
+       <text x="72" y="${logoPresent ? 190 : 158}" fill="#eedcb8" font-family="Arial, sans-serif" font-size="18" letter-spacing="5">FOR THE LIFE YOU IMAGINE</text>
+       <text x="72" y="${logoPresent ? 282 : 250}" fill="#fbf4e6" font-family="Georgia, serif" font-size="88" font-weight="bold">${lineOne}</text>
+       <text x="72" y="${logoPresent ? 377 : 345}" fill="#fbf4e6" font-family="Georgia, serif" font-size="88" font-weight="bold">${lineTwo}</text>
+       <rect x="72" y="${logoPresent ? 440 : 408}" width="56" height="4" fill="${theme.accent}"/>
+       <text x="72" y="${logoPresent ? 494 : 462}" fill="${theme.accent}" font-family="Arial, sans-serif" font-size="23" letter-spacing="2">${safeArea.toUpperCase()}</text>
+       <text x="72" y="${logoPresent ? 530 : 498}" fill="#f7e8cb" font-family="Arial, sans-serif" font-size="23">${safeCity}</text>
+       <rect x="72" y="645" width="936" height="110" rx="8" fill="${theme.accent}" opacity=".94"/>
+       ${safeBanner ? `<image href="${safeBanner}" x="72" y="645" width="936" height="110" preserveAspectRatio="xMidYMid slice" opacity=".78"/><rect x="72" y="645" width="936" height="110" rx="8" fill="${theme.end}" opacity=".28"/>` : ''}
+       <text x="105" y="693" fill="${theme.end}" font-family="Arial, sans-serif" font-size="15" font-weight="bold" letter-spacing="3">FEATURED LISTING</text>
+       <text x="105" y="730" fill="${theme.end}" font-family="Georgia, serif" font-size="29" font-weight="bold">${safeBanner ? 'Book a private viewing' : 'Ready for your next viewing'}</text>
       <rect x="72" y="1062" width="936" height="1" fill="#efdaaa" opacity=".48"/>
        <text x="72" y="1113" fill="${theme.accent}" font-family="Arial, sans-serif" font-size="16" letter-spacing="4">ASKING FROM</text>
       <text x="72" y="1170" fill="#fff6e5" font-family="Georgia, serif" font-size="49" font-weight="bold">${safePrice}</text>
@@ -548,8 +553,6 @@ function Home() {
             <div className="grid items-center gap-8 xl:grid-cols-[minmax(300px,470px)_minmax(190px,1fr)]">
               <div className="preview-frame relative mx-auto w-full max-w-[470px] overflow-hidden rounded-[13px] border-[6px] border-[#fbf8f1]" style={{ background: theme.mid, boxShadow: `0 30px 70px ${theme.shadow}, 0 4px 12px rgba(40,24,22,.1)` }} data-testid="preview-post">
                 <div className="relative aspect-[4/5] overflow-hidden" style={{ background: `linear-gradient(135deg, ${theme.start}, ${theme.mid} 56%, ${theme.end})` }}>
-                  {brandAssets.banner && <img src={brandAssets.banner} alt="" className="absolute inset-x-0 top-0 h-[48%] w-full object-cover opacity-35 mix-blend-screen" />}
-                  <div className="absolute inset-x-0 top-0 h-[52%]" style={{ background: `linear-gradient(180deg, ${theme.start}20 0%, ${theme.end}e8 100%)` }} />
                   <div className="absolute -right-[30%] -top-[8%] h-[73%] w-[83%] rounded-full" style={{ background: `radial-gradient(circle at 38% 42%, ${theme.accent}c7, ${theme.accent}00 67%)` }} />
                   <div className="absolute right-[12%] top-[8%] h-[21%] w-[21%] rounded-full shadow-[0_0_55px_rgba(223,188,118,.26)]" style={{ background: `${theme.accent}d1` }} />
                   <div className="absolute inset-0 opacity-[.14]" style={{ backgroundImage: 'linear-gradient(rgba(236,208,157,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(236,208,157,.5) 1px, transparent 1px)', backgroundSize: '14% 14%' }} />
@@ -557,8 +560,8 @@ function Home() {
                   <div className="absolute inset-x-[7%] top-[6%] border-t border-[#efdaaa]/40 pt-3">
                     <div className="flex items-center justify-between text-[7px] font-bold uppercase tracking-[.3em] text-[#e3bd76]"><span>The Property Edit</span><span className="text-[#f4e6c9]">Post 01</span></div>
                   </div>
-                  {brandAssets.logo && <img src={brandAssets.logo} alt="Brand logo" className="absolute left-[7%] top-[7%] h-[9%] max-w-[30%] object-contain object-left" />}
-                  <div className="absolute left-[7%] right-[7%] top-[15%]">
+                  {brandAssets.logo && <img src={brandAssets.logo} alt="Brand logo" className="absolute left-[7%] top-[8%] h-[8%] max-w-[34%] object-contain object-left" />}
+                  <div className={`absolute left-[7%] right-[7%] ${logoPresent ? 'top-[19%]' : 'top-[15%]'}`}>
                     <p className="mb-4 text-[8px] font-bold uppercase tracking-[.28em] text-[#eedcb8]">For the life you imagine</p>
                     <div className="font-serif text-[clamp(28px,5.4vw,57px)] font-bold leading-[.87] tracking-[-.055em]" style={{ color: theme.text }} data-testid="text-preview-property">
                       <div>{title[0] || 'Your next address'}</div>
@@ -567,6 +570,14 @@ function Home() {
                     <div className="mt-5 h-[3px] w-8" style={{ background: theme.accent }} />
                     <p className="mt-4 text-[9px] font-bold uppercase tracking-[.18em]" style={{ color: theme.accent }} data-testid="text-preview-location-area">{locationWords.area}</p>
                     <p className="mt-1 text-[10px]" style={{ color: theme.soft }} data-testid="text-preview-location-city">{locationWords.city}</p>
+                  </div>
+                  <div className="absolute inset-x-[7%] top-[55%] h-[11%] overflow-hidden rounded-[5px] border border-[#f6dfac]/55 shadow-[0_5px_16px_rgba(0,0,0,.12)]" style={{ background: theme.accent }}>
+                    {brandAssets.banner && <img src={brandAssets.banner} alt="" className="absolute inset-0 h-full w-full object-cover opacity-75" />}
+                    <div className="absolute inset-0" style={{ background: `linear-gradient(90deg, ${theme.accent}f2, ${theme.accent}b8 56%, ${theme.end}9c)` }} />
+                    <div className="relative flex h-full flex-col justify-center px-[5%]">
+                      <p className="text-[7px] font-bold uppercase tracking-[.25em]" style={{ color: theme.end }}>Featured listing</p>
+                      <p className="mt-1 font-serif text-[clamp(13px,2vw,22px)] font-bold leading-none" style={{ color: theme.end }}>{brandAssets.banner ? 'Book a private viewing' : 'Ready for your next viewing'}</p>
+                    </div>
                   </div>
                   <div className="absolute inset-x-[7%] bottom-[6%] border-t border-[#efdaaa]/45 pt-4">
                     <p className="text-[8px] font-bold uppercase tracking-[.25em]" style={{ color: theme.accent }}>Asking from</p>
